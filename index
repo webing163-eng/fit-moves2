@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="format-detection" content="telephone=no,email=no,address=no">
+<meta name="theme-color" content="#0d9488">
+<title>训练动作｜A/B 版</title>
+<style>
+  *{box-sizing:border-box;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:#f5f6f8;color:#16191d;
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
+    padding-bottom:30px;
+  }
+  /* ---------- 顶部 ---------- */
+  .hd{
+    position:sticky;top:0;z-index:50;background:#fff;
+    border-bottom:1px solid #e6e9ec;
+    padding:10px 14px 0;
+  }
+  .hd-row{display:flex;align-items:baseline;justify-content:space-between}
+  .hd-t{font-size:17px;font-weight:650;letter-spacing:.2px}
+  .hd-c{font-size:13px;color:#0d9488;font-weight:650}
+  .track{height:4px;background:#e9ecef;border-radius:99px;overflow:hidden;margin:8px 0 0}
+  .track i{display:block;height:100%;width:0;background:#0d9488;border-radius:99px;transition:width .25s}
+  .tabs{
+    display:flex;overflow-x:auto;padding:10px 0 10px;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:0 0 auto;margin-right:8px;padding:8px 14px;border-radius:99px;
+    border:1px solid #e0e4e8;background:#fff;color:#5c6570;
+    font-size:14px;line-height:1.2;font-family:inherit;
+  }
+  .tab:last-child{margin-right:0}
+  .tab.on{background:#16191d;border-color:#16191d;color:#fff;font-weight:600}
+  /* ---------- 列表 ---------- */
+  .wrap{padding:14px}
+  .card{
+    background:#fff;border:1px solid #e6e9ec;border-radius:14px;
+    padding:15px 15px 14px;margin-bottom:12px;position:relative;
+  }
+  .card.done{background:#f8fdfc;border-color:#b9e3dd}
+  .card.done .nm{color:#8a929c;text-decoration:line-through}
+  .row{display:flex;align-items:flex-start}
+  .idx{
+    flex:0 0 26px;height:26px;border-radius:8px;background:#e6f5f3;color:#0d9488;
+    font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;
+    margin-right:10px;margin-top:2px;
+  }
+  .tt{flex:1;min-width:0;padding-right:42px}
+  .nm{font-size:17px;font-weight:640;line-height:1.35}
+  .ds{
+    display:inline-block;margin-top:5px;font-size:12.5px;font-weight:650;
+    color:#0d9488;background:#e6f5f3;padding:2px 9px;border-radius:6px;
+  }
+  .ck{
+    position:absolute;top:14px;right:14px;width:30px;height:30px;
+    border:1.5px solid #d2d8de;border-radius:9px;background:#fff;
+    display:flex;align-items:center;justify-content:center;padding:0;
+  }
+  .ck svg{width:16px;height:16px;stroke:#fff;stroke-width:3;fill:none;opacity:0;transition:.15s}
+  .card.done .ck{background:#0d9488;border-color:#0d9488}
+  .card.done .ck svg{opacity:1}
+  .mu{font-size:13px;color:#69707a;margin:10px 0 8px}
+  ul.c{margin:0;padding-left:19px;font-size:15px;line-height:1.7}
+  ul.c li{margin-bottom:3px}
+  .er{
+    margin-top:10px;font-size:14px;line-height:1.6;color:#a3500a;
+    background:#fef7e9;border-radius:9px;padding:9px 11px;
+  }
+  .er b{font-weight:700}
+  .go{
+    display:block;text-align:center;margin-top:12px;padding:11px 0;
+    background:#0d9488;color:#fff;text-decoration:none;border-radius:10px;
+    font-size:15px;font-weight:600;letter-spacing:.3px;
+  }
+  .go:active{background:#0b8078}
+  .alt{display:flex;margin-top:8px}
+  .alt a{
+    flex:1;text-align:center;padding:9px 0;margin-right:8px;
+    border:1px solid #e0e4e8;border-radius:9px;color:#414952;
+    text-decoration:none;font-size:13.5px;background:#fff;
+  }
+  .alt a:last-child{margin-right:0}
+  /* ---------- 页尾 ---------- */
+  .ft{padding:4px 14px 20px}
+  .warn{
+    font-size:14px;line-height:1.6;color:#b91c1c;background:#fef2f2;
+    border:1px solid #fbd5d5;border-radius:11px;padding:12px 13px;margin-bottom:12px;
+  }
+  details{
+    background:#fff;border:1px solid #e6e9ec;border-radius:12px;
+    padding:13px 14px;margin-bottom:10px;
+  }
+  summary{
+    font-size:14.5px;font-weight:600;list-style:none;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"＋";color:#9aa2ab;font-size:16px;font-weight:400}
+  details[open] summary::after{content:"－"}
+  details ol,details ul{margin:10px 0 0;padding-left:19px;font-size:14px;line-height:1.7;color:#3c434b}
+  details li{margin-bottom:4px}
+  .tip{font-size:12.5px;color:#8a929c;text-align:center;padding:6px 0 0;line-height:1.7}
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <div class="hd-row">
+    <div class="hd-t">训练动作</div>
+    <div class="hd-c" id="cnt">0 / 0</div>
+  </div>
+  <div class="track"><i id="fill"></i></div>
+  <div class="tabs" id="tabs"></div>
+</div>
+
+<div class="wrap" id="list"></div>
+
+<div class="ft">
+  <div class="warn">关节锐痛、头晕、胸闷、眼前发黑 → 立刻停，当天不再练。肌肉酸胀正常，关节刺痛不正常。</div>
+
+  <details>
+    <summary>动作做不到？降级方案</summary>
+    <ul>
+      <li>深蹲不稳 → 扶门框，或改「坐姿起立」（椅子坐下站起）</li>
+      <li>俯卧撑不足 8 个 → 跪姿，或手撑桌沿做上斜</li>
+      <li>平板腰塌 → 膝盖着地，20 秒也算数</li>
+      <li>分腿蹲站不住 → 一手扶墙，幅度减半</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary>怎么挑视频（重要）</summary>
+    <ol>
+      <li>一次只看 1 分半：前 60 秒完整示范，后 30 秒看错误对比</li>
+      <li>只收三个特征：有侧面机位、有错误示范、讲呼吸</li>
+      <li>跳过「30 天暴瘦」「燃脂 500 卡」标题，动作模式不适合零基础</li>
+      <li>手机架起来对自己侧面录一组，比看十个教程有用</li>
+    </ol>
+  </details>
+
+  <div class="tip">长按识别或点右上角⋯ → 在浏览器打开，可添加到桌面</div>
+</div>
+
+<script>
+var DATA = [
+  {v:'A',nm:'高脚杯深蹲',ds:'3 组 × 12 次',mu:'股四头肌 · 臀部 · 核心',
+   c:['脚比肩略宽，脚尖外开约 15°','重量抱在胸口，手肘落在膝盖内侧','蹲到大腿接近平行，膝盖朝脚尖方向','下蹲 2 秒、起身 1 秒，起身时呼气'],
+   e:'膝盖往里夹、脚跟离地、腰往下塌。出现这三样就减重量或减幅度。',
+   kw:'高脚杯深蹲 教学',yt:'goblet squat form tutorial'},
+
+  {v:'A',nm:'罗马尼亚硬拉',ds:'3 组 × 10 次',mu:'大腿后侧 · 臀 · 下背',
+   c:['膝盖固定微屈约 15°，全程不再弯','靠「屁股向后顶墙」启动，不是往下蹲','重量贴着大腿下滑，杆不离腿','大腿后侧有拉伸感就回升，不追求触地'],
+   e:'圆背是唯一不可接受的错误。重量一大就圆背，说明该减重量。也别做成深蹲。',
+   kw:'罗马尼亚硬拉 教学',yt:'romanian deadlift form tutorial'},
+
+  {v:'A',nm:'分腿蹲',ds:'2 组 × 10 次/腿',mu:'股四头肌 · 臀部 · 平衡',
+   c:['前后脚约一大步，后脚脚尖点地','身体垂直下沉，后膝朝地面','重心压在前脚全脚掌','扶墙保持平衡不算作弊'],
+   e:'前膝内扣、身体往前砸、前脚跟抬起。站不稳就先扶墙。',
+   kw:'分腿蹲 教学',yt:'split squat form tutorial'},
+
+  {v:'A',nm:'平板支撑',ds:'3 组 × 30 秒',mu:'核心 · 腹横肌',
+   c:['手肘在肩膀正下方','臀部不塌不翘，身体一条直线','肋骨往回收，肚子绷紧像要挨一拳','正常呼吸，不憋气'],
+   e:'宁可 20 秒标准，不要 60 秒塌腰。腰一塌立刻结束这组。',
+   kw:'平板支撑 标准动作',yt:'plank proper form'},
+
+  {v:'B',nm:'哑铃单臂划船',ds:'3 组 × 12 次/侧',mu:'背阔肌 · 中背 · 二头',
+   c:['一手一膝撑凳，背部保持水平','先沉肩，再用肘部贴身往后拉','想象把肘部塞进后裤袋','顶端肩胛夹紧停 1 秒'],
+   e:'耸肩、用腰甩、只动手臂不夹肩胛——这三个是最常见的「白练」原因。',
+   kw:'哑铃单臂划船 教学',yt:'dumbbell one arm row form'},
+
+  {v:'B',nm:'俯卧撑（可跪姿）',ds:'3 组 × 8–12 次',mu:'胸 · 肩前束 · 三头',
+   c:['手在肩略宽，手指朝前','肩到踝一条直线，屁股别翘','肘夹角约 45°，不要横开 90°','胸口先靠近地面，全程控制'],
+   e:'做不到 8 个就改跪姿。塌腰凑数比少做几次伤得多。',
+   kw:'跪姿俯卧撑 教学',yt:'knee push up form'},
+
+  {v:'B',nm:'坐姿哑铃肩推',ds:'2 组 × 10 次',mu:'三角肌 · 三头',
+   c:['背靠凳，腰自然贴靠背','哑铃起始在耳朵两侧','推到手臂接近伸直但不锁死','下放 2 秒，控制住'],
+   e:'腰过度反弓、肘部完全锁死、下放失控砸下来。',
+   kw:'哑铃坐姿肩推 教学',yt:'seated dumbbell shoulder press form'},
+
+  {v:'B',nm:'弹力带面拉',ds:'2 组 × 15 次',mu:'后肩 · 上背（久坐圆肩对症）',
+   c:['带子固定在眼睛高度','拉向鼻子或额头，不是拉向胸口','肘高于手，末端肩胛夹紧 1 秒','回放要慢，别让带子弹回'],
+   e:'阻力太大靠腰后仰代偿。这个动作轻一点才有意义。',
+   kw:'弹力带面拉 教学',yt:'band face pull form'},
+
+  {v:'B',nm:'农夫走',ds:'2 组 × 40 步',mu:'核心 · 握力 · 斜方',
+   c:['两手重量相同，肩膀下沉','小步快走，身体不左右晃','全程正常呼吸，别憋气','走到握不住为止'],
+   e:'耸肩、身体侧倾、憋气。重量从轻开始，握力比你想的弱。',
+   kw:'农夫行走 教学',yt:'farmers walk form'},
+
+  {v:'W',nm:'弹力带绕肩',ds:'15 次',mu:'肩关节活动度',
+   c:['双手宽握带子，手臂伸直','从身前绕到身后再回来','慢一点，不要耸肩'],
+   e:'握太窄会卡住，宁可握宽。', kw:'弹力带绕肩 热身',yt:'band shoulder dislocate'},
+
+  {v:'W',nm:'徒手深蹲',ds:'10 次',mu:'髋膝踝激活',
+   c:['双手前平举保持平衡','蹲到大腿平行，慢慢起','感受膝盖和髋一起动'],
+   e:'只做半程等于没热身。', kw:'徒手深蹲 热身',yt:'bodyweight squat warm up'},
+
+  {v:'W',nm:'臀桥',ds:'15 次',mu:'臀部激活',
+   c:['仰卧屈膝，脚跟离臀一掌','收紧臀部把髋顶起','顶端停 1 秒再落'],
+   e:'用腰顶起来屁股没感觉。先想着「夹屁股」再顶。', kw:'臀桥 标准动作',yt:'glute bridge form'},
+
+  {v:'W',nm:'猫驼式',ds:'8 次',mu:'脊柱活动度',
+   c:['四足跪姿，吸气塌腰抬头','呼气拱背低头','跟着呼吸慢慢来'],
+   e:'速度快了没意义，一节一节动脊柱。', kw:'猫驼式 教学',yt:'cat cow stretch'},
+
+  {v:'R',nm:'髋屈肌拉伸',ds:'每侧 45 秒',mu:'久坐第一刚需',
+   c:['单膝跪地，后腿髋部往前推','收紧屁股，别用腰代偿','大腿根前侧拉开就停住'],
+   e:'腰塌下去顶，拉的是腰不是髋。', kw:'髋屈肌拉伸 久坐',yt:'hip flexor stretch'},
+
+  {v:'R',nm:'门框扩胸',ds:'每侧 30 秒',mu:'胸 · 圆肩',
+   c:['小臂贴门框，肘略高于肩','身体慢慢往前送','不要耸肩'],
+   e:'拉太猛会扯到肩前侧，慢慢加幅度。', kw:'门框扩胸 拉伸',yt:'doorway chest stretch'},
+
+  {v:'R',nm:'腘绳肌拉伸',ds:'每侧 45 秒',mu:'大腿后侧',
+   c:['坐姿单腿伸直，背挺直','从髋部往前折，不是弓背','轻微拉伸感就够'],
+   e:'弓背去够脚尖，拉的是背不是腿。', kw:'腘绳肌拉伸 教学',yt:'hamstring stretch seated'},
+
+  {v:'R',nm:'4-7-8 呼吸',ds:'4 轮',mu:'降交感 · 助入睡',
+   c:['鼻吸 4 秒','屏息 7 秒','口呼 8 秒，呼到底','躺床上做 4 轮'],
+   e:'憋不住就缩短屏息时间，别硬撑到头晕。', kw:'4-7-8 呼吸法',yt:'4-7-8 breathing'}
+];
+
+var TABS = [
+  {k:'A', l:'A 版·下肢'},
+  {k:'B', l:'B 版·上肢'},
+  {k:'W', l:'热身 3′'},
+  {k:'R', l:'恢复 5′'}
+];
+
+var KEY = 'fit_v2_checks';
+var done = {};
+try { done = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch(e) { done = {}; }
+var cur = 'A';
+
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(ch){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch];
+  });
+}
+function $(id){ return document.getElementById(id); }
+
+function renderTabs(){
+  var h = '';
+  for (var i=0;i<TABS.length;i++){
+    var t = TABS[i];
+    h += '<button class="tab'+(t.k===cur?' on':'')+'" data-k="'+t.k+'">'+t.l+'</button>';
+  }
+  $('tabs').innerHTML = h;
+  var bs = $('tabs').getElementsByTagName('button');
+  for (var j=0;j<bs.length;j++){
+    bs[j].onclick = function(){
+      cur = this.getAttribute('data-k');
+      renderTabs(); render();
+      window.scrollTo({top:0, behavior:'instant'});
+    };
+  }
+}
+
+function render(){
+  var items = [], i;
+  for (i=0;i<DATA.length;i++){ if (DATA[i].v === cur) items.push(DATA[i]); }
+
+  var total = items.length, cnt = 0;
+  for (i=0;i<total;i++){ if (done[items[i].v+'|'+items[i].nm]) cnt++; }
+
+  $('cnt').textContent = cnt + ' / ' + total;
+  $('fill').style.width = total ? (cnt/total*100).toFixed(1)+'%' : '0%';
+
+  var h = '';
+  for (i=0;i<total;i++){
+    var d = items[i];
+    var id = d.v+'|'+d.nm;
+    var isDone = !!done[id];
+    var bili = 'https://search.bilibili.com/all?keyword=' + encodeURIComponent(d.kw);
+    var dy   = 'https://www.douyin.com/search/' + encodeURIComponent(d.kw);
+    var yt   = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(d.yt);
+
+    h += '<div class="card'+(isDone?' done':'')+'">';
+    h +=   '<div class="ck" data-id="'+esc(id)+'"><svg viewBox="0 0 24 24"><polyline points="4,12 10,18 20,6"/></svg></div>';
+    h +=   '<div class="row"><div class="idx">'+(i+1)+'</div>';
+    h +=     '<div class="tt"><div class="nm">'+esc(d.nm)+'</div>';
+    h +=       '<span class="ds">'+esc(d.ds)+'</span></div></div>';
+    h +=   '<div class="mu">目标：'+esc(d.mu)+'</div>';
+    h +=   '<ul class="c">';
+    for (var k=0;k<d.c.length;k++){ h += '<li>'+esc(d.c[k])+'</li>'; }
+    h +=   '</ul>';
+    h +=   '<div class="er"><b>常见错误</b>　'+esc(d.e)+'</div>';
+    h +=   '<a class="go" href="'+bili+'" target="_blank" rel="noopener">在 B 站看教学</a>';
+    h +=   '<div class="alt"><a href="'+dy+'" target="_blank" rel="noopener">抖音</a>';
+    h +=     '<a href="'+yt+'" target="_blank" rel="noopener">YouTube</a></div>';
+    h += '</div>';
+  }
+  $('list').innerHTML = h;
+
+  var cks = $('list').getElementsByClassName('ck');
+  for (var n=0;n<cks.length;n++){
+    cks[n].onclick = function(ev){
+      ev.stopPropagation();
+      var id = this.getAttribute('data-id');
+      if (done[id]) delete done[id]; else done[id] = 1;
+      try { localStorage.setItem(KEY, JSON.stringify(done)); } catch(e){}
+      render();
+    };
+  }
+}
+
+renderTabs();
+render();
+</script>
+</body>
+</html>
